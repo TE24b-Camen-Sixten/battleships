@@ -1,25 +1,39 @@
 ﻿static void Start()
 {
     Console.WriteLine("Welcome to Battleships!\n");
-    
-    bool success1 = false;
-    bool success2 = false;
+    Console.WriteLine("To start game press [Enter], to play with custom rules, type \"custom\" and then press [Enter]");
+    string rules = Console.ReadLine();
 
-    while(success1 == false && success2 == false)
+    if (rules == "custom")
     {
-        Console.WriteLine("How high do you want the board to be (10 recomended)");
-        string boardHeightString = Console.ReadLine();
-        Console.WriteLine("How wide do you want the board to be (10 recomended)");
-        string boardWidthString = Console.ReadLine();
+        bool successHeight = false;
+        bool successWidth = false;
+        bool successShips = false;
 
-        success1 = int.TryParse(boardHeightString, out int boardHeight);
-        success2 = int.TryParse(boardWidthString, out int boardWidth);
-        if (success1 == true && success2 == true)
-        {   
-            Console.WriteLine("");
-            int[,] board = new int[boardHeight, boardWidth];
-            PrintBoard(boardHeight, boardWidth, board);
+        while (successHeight == false && successWidth == false && successShips == false)
+        {
+            Console.WriteLine("How high do you want the board to be?");
+            string boardHeightString = Console.ReadLine();
+            Console.WriteLine("How wide do you want the board to be?");
+            string boardWidthString = Console.ReadLine();
+            Console.WriteLine("How many battleships do you want each player to have?");
+            string shipsAmountString = Console.ReadLine();
+
+            successHeight = int.TryParse(boardHeightString, out int boardHeight);
+            successWidth = int.TryParse(boardWidthString, out int boardWidth);
+            successShips = int.TryParse(shipsAmountString, out int shipsAmount);
+
+            if (successHeight == true && successWidth == true && successShips == true)
+            {
+                Console.WriteLine("");
+                int[,] board = new int[boardHeight, boardWidth];
+                PlaceShips(board, boardHeight, boardWidth, shipsAmount, true);
+            }
         }
+    }
+    else
+    {
+        PlaceShips(new int[10, 10], 10, 10, 15, true);
     }
 }
 
@@ -37,27 +51,54 @@ static void PrintBoard(int height, int width, int[,] board)
             {
                 Console.Write("= ");
             }
-                
+
         }
         Console.WriteLine();
     }
-
-    PlaceShips(board, height, width);
 }
 
-static void PlaceShips(int[,] board, int height, int width)
+static void PlaceShips(int[,] board, int height, int width, int shipsAmount, bool printBoard)
 {
-    Console.Write("\nWhere do you want to place your battleships\ny:");
-    string yPlaceString = Console.ReadLine();
-    Console.Write("x:");
-    string xPlaceString = Console.ReadLine();
-
-    bool success1 = int.TryParse(yPlaceString, out int yPlace);
-    bool success2 = int.TryParse(xPlaceString, out int xPlace);
-    if (success1 == true && success2 == true)
+    if (printBoard == true)
     {
-        board[yPlace - 1, xPlace - 1] = 1;
+        PrintBoard(height, width, board);
     }
+    for (int i = 0; i < shipsAmount; i++)
+    {
+        Console.Write($"\nWhere do you want to place your battleship nr: {i + 1}\nAfter that you have {shipsAmount - i - 1} left to place\nIf you want to do all this automaticaly just type \"auto\" as y value\ny:");
+
+        string yPlaceString = Console.ReadLine();
+
+        if (yPlaceString == "auto")
+        {
+            i = shipsAmount;
+            for (int a = 0; a < shipsAmount; a++)
+            {
+                board[RandomBoardSquareY(height), RandomBoardSquareX(width)] = 1;
+            }
+        }
+        else
+        {
+            Console.Write("x:");
+            string xPlaceString = Console.ReadLine();
+            bool successY = int.TryParse(yPlaceString, out int yPlace);
+            bool successX = int.TryParse(xPlaceString, out int xPlace);
+            if (successY == true && successX == true)
+            {
+                board[yPlace - 1, xPlace - 1] = 1;
+            }
+        }
+    }
+    PrintBoard(height, width, board);
+}
+
+static int RandomBoardSquareY(int max)
+{
+    return Random.Shared.Next(max);
+}
+static int RandomBoardSquareX(int max)
+{
+    return Random.Shared.Next(max);
 }
 
 Start();
