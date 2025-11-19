@@ -29,7 +29,15 @@ static void PrintBoard(int height, int width, int[,] board)
     {
         for (int x = 0; x < width; x++)
         {
-            Console.Write("~ ");
+            if (board[y, x] == 0)
+            {
+                Console.Write("~ ");
+            }
+            else if (board[y, x] == 1)
+            {
+                Console.Write("= ");
+            }
+                
         }
         Console.WriteLine();
     }
@@ -39,10 +47,17 @@ static void PrintBoard(int height, int width, int[,] board)
 
 static void PlaceShips(int[,] board, int height, int width)
 {
-    Console.Write("\nVar vill du placera dina skepp?\ny:");
+    Console.Write("\nWhere do you want to place your battleships\ny:");
     string yPlaceString = Console.ReadLine();
     Console.Write("x:");
     string xPlaceString = Console.ReadLine();
+
+    bool success1 = int.TryParse(yPlaceString, out int yPlace);
+    bool success2 = int.TryParse(xPlaceString, out int xPlace);
+    if (success1 == true && success2 == true)
+    {
+        board[yPlace - 1, xPlace - 1] = 1;
+    }
 }
 
 Start();
