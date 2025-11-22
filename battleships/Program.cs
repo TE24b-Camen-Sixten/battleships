@@ -10,7 +10,7 @@
         bool successWidth = false;
         bool successShips = false;
 
-        while (successHeight == false && successWidth == false && successShips == false)
+        while (!successHeight && !successWidth && !successShips)
         {
             Console.WriteLine("How high do you want the board to be?");
             string boardHeightString = Console.ReadLine();
@@ -23,7 +23,7 @@
             successWidth = int.TryParse(boardWidthString, out int boardWidth);
             successShips = int.TryParse(shipsAmountString, out int shipsAmount);
 
-            if (successHeight == true && successWidth == true && successShips == true)
+            if (successHeight && successWidth && successShips)
             {
                 Console.WriteLine("");
                 int[,] board1 = new int[boardHeight, boardWidth];
@@ -38,19 +38,33 @@
     }
 }
 
-static void PrintBoard(int height, int width, int[,] board1, int[,] board2)
+static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2)
 {
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
         {
-            if (board1[y, x] == 0)
+            if (useBoard1)
             {
-                Console.Write("~ ");
+                if (board1[y, x] == 0)
+                {
+                    Console.Write("~ ");
+                }
+                else if (board1[y, x] == 1)
+                {
+                    Console.Write("= ");
+                }
             }
-            else if (board1[y, x] == 1)
+            else
             {
-                Console.Write("= ");
+                if (board2[y, x] == 0)
+                {
+                    Console.Write("~ ");
+                }
+                else if (board2[y, x] == 1)
+                {
+                    Console.Write("= ");
+                }
             }
 
         }
@@ -60,9 +74,10 @@ static void PrintBoard(int height, int width, int[,] board1, int[,] board2)
 
 static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int width, int shipsAmount, bool printBoard)
 {
-    if (printBoard == true)
+
+    if (printBoard)
     {
-        PrintBoard(height, width, board1, board2);
+        PrintBoard(p1, height, width, board1, board2);
     }
     for (int i = 0; i < shipsAmount; i++)
     {
@@ -75,7 +90,14 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
             i = shipsAmount;
             for (int a = 0; a < shipsAmount; a++)
             {
-                board1[RandomBoardSquareY(height), RandomBoardSquareX(width)] = 1;
+                if (p1)
+                {
+                    board1[RandomBoardSquareY(height), RandomBoardSquareX(width)] = 1;
+                }
+                else
+                {
+                    board2[RandomBoardSquareY(height), RandomBoardSquareX(width)] = 1;
+                }
             }
         }
         else
@@ -84,13 +106,25 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
             string xPlaceString = Console.ReadLine();
             bool successY = int.TryParse(yPlaceString, out int yPlace);
             bool successX = int.TryParse(xPlaceString, out int xPlace);
-            if (successY == true && successX == true)
+            if (successY && successX)
             {
-                board1[yPlace - 1, xPlace - 1] = 1;
+                if (p1)
+                {
+                    board1[yPlace - 1, xPlace - 1] = 1;
+                }
+                else
+                {
+                    board2[yPlace - 1, xPlace - 1] = 1;
+                }
             }
         }
     }
-    PrintBoard(height, width, board1);
+    PrintBoard(p1, height, width, board1, board2);
+}
+
+static void Attack()
+{
+    
 }
 
 static int RandomBoardSquareY(int max)
