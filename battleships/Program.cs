@@ -142,6 +142,6 @@ static int RandomBoardSquareX(int max)// skapar ett slupat värde som inte är m
 {
     return Random.Shared.Next(max);
 }
-
+//bajs
 Start();
 Console.ReadLine();
