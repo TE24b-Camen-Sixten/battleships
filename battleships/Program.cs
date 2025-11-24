@@ -4,13 +4,13 @@
     Console.WriteLine("To start game press [Enter], to play with custom rules, type \"custom\" and then press [Enter]");
     string rules = Console.ReadLine();
 
-    if (rules == "custom")
+    if (rules == "custom") //Kollar om användaren skriver custom, om hen gör det ger programmet användaren möjlighet att välja höjd, bredd och antal skepp att spela med
     {
         bool successHeight = false;
         bool successWidth = false;
         bool successShips = false;
 
-        while (!successHeight && !successWidth && !successShips)
+        while (!successHeight && !successWidth && !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
         {
             Console.WriteLine("How high do you want the board to be?");
             string boardHeightString = Console.ReadLine();
@@ -38,7 +38,7 @@
     }
 }
 
-static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2)
+static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2) //Skriver ut brädet för antingen spelare 1 eller 2 om "värdet" bakom rutan = 0 gör den vatten (~) annars om det är 1 gör den en båt (=)
 {
     for (int y = 0; y < height; y++)
     {
@@ -66,20 +66,19 @@ static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int
                     Console.Write("= ");
                 }
             }
-
         }
         Console.WriteLine();
     }
 }
 
-static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int width, int shipsAmount, bool printBoard)
+static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int width, int shipsAmount, bool printBoard) //Låter användaren placera sinna skepp, kan även skriva ut brädet genom att kalla på den metoden
 {
 
-    if (printBoard)
+    if (printBoard)// Om brädet ska skrivas, skrivs brädet ut genom att kalla på en metod soms kriver ut brädet
     {
         PrintBoard(p1, height, width, board1, board2);
     }
-    for (int i = 0; i < shipsAmount; i++)
+    for (int i = 0; i < shipsAmount; i++)// Låter användaren placera ett skepp i taget på valfri ruta, om användaren skriver auto så placeras skeppen på random koordinater
     {
         Console.Write($"\nWhere do you want to place your battleship nr: {i + 1}\nAfter that you have {shipsAmount - i - 1} left to place\nIf you want to do all this automaticaly just type \"auto\" as y value\ny:");
 
@@ -122,16 +121,24 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
     PrintBoard(p1, height, width, board1, board2);
 }
 
-static void Attack()
+static void Attack(bool p1, int[,] board1, int[,] board2)
 {
-    
+    if (p1)
+    {
+        Console.Write("Choose which square to attack\ny:");
+        string yPlaceString = Console.ReadLine();
+        Console.Write("x:");
+        string xPlaceString = Console.ReadLine();
+        bool successY = int.TryParse(yPlaceString, out int yPlace);
+        bool successX = int.TryParse(xPlaceString, out int xPlace);
+    }
 }
 
-static int RandomBoardSquareY(int max)
+static int RandomBoardSquareY(int max)//Skapar ett slumpat värde som inte är mer än höjden på brädet
 {
     return Random.Shared.Next(max);
 }
-static int RandomBoardSquareX(int max)
+static int RandomBoardSquareX(int max)// skapar ett slupat värde som inte är mer än bredden på brädet
 {
     return Random.Shared.Next(max);
 }
