@@ -40,6 +40,7 @@
 
 static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2) //Skriver ut brädet för antingen spelare 1 eller 2 om "värdet" bakom rutan = 0 gör den vatten (~) annars om det är 1 gör den en båt (=)
 {
+    Console.WriteLine("Here is your board:");
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -67,6 +68,7 @@ static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int
                 }
             }
         }
+        Console.WriteLine(); //går ner en rad efter varje rad med x är klara
     }
 }
 
@@ -119,7 +121,7 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
     PrintBoard(p1, height, width, board1, board2);
 }
 
-static void Attack(bool p1, int[,] board1, int[,] board2)
+static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
 {
     bool successY = false;
     bool successX = false;
@@ -138,24 +140,46 @@ static void Attack(bool p1, int[,] board1, int[,] board2)
                 if (board2[yPlace - 1, xPlace - 1] == 1)
                 {
                     Console.WriteLine("HIT!");
+                    if(!IsAlive(!p1, board1, board2, height, width))
+                    {
+                        GameOver(p1);
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Miss");
                 }
+                Attack(!p1, board1, board2, height, width);
             }
             else
             {
                 if (board1[yPlace - 1, xPlace - 1] == 1)
                 {
                     Console.WriteLine("HIT!");
+                    if(!IsAlive(!p1, board1, board2, height, width))
+                    {
+                        GameOver(p1);
+                    }
                 }
                 else
                 {
                     Console.WriteLine("Miss");
                 }
+                Attack(!p1, board1, board2, height, width);
             }
         }
+    }
+}
+
+static void GameOver(bool winnerIsPlayer1)
+{
+    if (winnerIsPlayer1)
+    {
+        Console.WriteLine("Vi har en vinnare! Det är... Spelare 1!");
+    }
+    else
+    {
+        Console.WriteLine("Vi har en vinnare! Det är... Spelare 2!");
     }
 }
 
@@ -195,3 +219,4 @@ static int RandomBoardSquareX(int max)// skapar ett slupat värde som inte är m
 }
 
 Start();
+Console.ReadLine();
