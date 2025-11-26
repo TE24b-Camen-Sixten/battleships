@@ -1,4 +1,6 @@
-﻿static void Start()
+﻿using System.Xml;
+
+static void Start()
 {
     Console.WriteLine("Welcome to Battleships!\n");
     Console.WriteLine("To start game press [Enter], to play with custom rules, type \"custom\" and then press [Enter]");
@@ -28,19 +30,27 @@
                 Console.WriteLine("");
                 int[,] board1 = new int[boardHeight, boardWidth];
                 int[,] board2 = board1;
-                PlaceShips(true, board1, board2, boardHeight, boardWidth, shipsAmount, true);
+                PlaceShips(true, board1, board2, boardHeight, boardWidth, shipsAmount);
             }
         }
     }
     else
     {
-        PlaceShips(true, new int[10, 10], new int[10, 10], 10, 10, 15, true);
+        PlaceShips(true, new int[10, 10], new int[10, 10], 10, 10, 15);
     }
 }
 
 static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2) //Skriver ut brädet för antingen spelare 1 eller 2 om "värdet" bakom rutan = 0 gör den vatten (~) annars om det är 1 gör den en båt (=)
 {
-    Console.WriteLine("Here is your board:");
+    if (useBoard1)
+    {
+        Console.WriteLine("Hi player 1, this is your board:");
+    }
+    else
+    {
+        Console.WriteLine("Hi player 2, this is your board:");
+    }
+
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -72,12 +82,15 @@ static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int
     }
 }
 
-static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int width, int shipsAmount, bool printBoard) //Låter användaren placera sinna skepp, kan även skriva ut brädet genom att kalla på den metoden
+static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int width, int shipsAmount) //Låter användaren placera sinna skepp, kan även skriva ut brädet genom att kalla på den metoden
 {
-    if (printBoard)// Om brädet ska skrivas, skrivs brädet ut genom att kalla på en metod soms kriver ut brädet
+    PrintBoard(p1, height, width, board1, board2);
+
+    if (p1)
     {
-        PrintBoard(p1, height, width, board1, board2);
+        Console.WriteLine("\nNow player 1 will place their ships, player two needs to look away");
     }
+
     for (int i = 0; i < shipsAmount; i++)// Låter användaren placera ett skepp i taget på valfri ruta, om användaren skriver auto så placeras skeppen på random koordinater
     {
         Console.Write($"\nWhere do you want to place your battleship nr: {i + 1}\nAfter that you have {shipsAmount - i - 1} left to place\nIf you want to do all this automaticaly just type \"auto\" as y value\ny:");
@@ -115,10 +128,25 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
                 {
                     board2[yPlace - 1, xPlace - 1] = 1;
                 }
+                Console.Clear();
+                //printboard
             }
         }
     }
-    PrintBoard(p1, height, width, board1, board2);
+    if (p1)
+    {
+        Console.Clear();
+        Console.WriteLine("Now it is player 2s turn to place their ships, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
+        if (Console.ReadLine() == "p2")
+        {
+            Console.Clear();
+            PlaceShips(!p1, board1, board2, height, width, shipsAmount);
+        }
+    }
+    else
+    {
+        Attack(!p1, board1, board2, height, width);
+    }
 }
 
 static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
@@ -175,11 +203,19 @@ static void GameOver(bool winnerIsPlayer1)
 {
     if (winnerIsPlayer1)
     {
-        Console.WriteLine("Vi har en vinnare! Det är... Spelare 1!");
+        Console.WriteLine("We have a winner... Player 1!\nDo you want to play again? If yes type \"yes\"");
+        if (Console.ReadLine() == "yes")
+        {
+            Start();
+        }
     }
     else
     {
-        Console.WriteLine("Vi har en vinnare! Det är... Spelare 2!");
+        Console.WriteLine("We have a winner... Player 2!\nDo you want to play again? If yes type \"yes\"");
+        if (Console.ReadLine() == "yes")
+        {
+            Start();
+        }
     }
 }
 
