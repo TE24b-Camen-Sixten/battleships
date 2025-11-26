@@ -88,7 +88,7 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
 
     if (p1)
     {
-        Console.WriteLine("\nNow player 1 will place their ships, player two needs to look away");
+        Console.WriteLine("\nNow player 1 will place their ships, player 2 needs to look away");
     }
 
     for (int i = 0; i < shipsAmount; i++)// Låter användaren placera ett skepp i taget på valfri ruta, om användaren skriver auto så placeras skeppen på random koordinater
@@ -129,18 +129,22 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
                     board2[yPlace - 1, xPlace - 1] = 1;
                 }
                 Console.Clear();
-                //printboard
+                PrintBoard(p1, height, width, board1, board2);
             }
         }
     }
     if (p1)
     {
-        Console.Clear();
-        Console.WriteLine("Now it is player 2s turn to place their ships, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
-        if (Console.ReadLine() == "p2")
+        while (true)
         {
             Console.Clear();
-            PlaceShips(!p1, board1, board2, height, width, shipsAmount);
+            Console.WriteLine("Now it is player 2s turn to place their ships, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
+            if (Console.ReadLine() == "p2")
+            {
+                Console.Clear();
+                PlaceShips(!p1, board1, board2, height, width, shipsAmount);
+                break;
+            }
         }
     }
     else
@@ -151,8 +155,10 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
 
 static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
 {
-    bool successY = false;
-    bool successX = false;
+    bool successY = true;
+    bool successX = true;
+    //fixa så player 1 kör igen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
     while (successY && successX)
     {
         Console.Write("Choose which square to attack\ny:");
@@ -168,7 +174,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
                 if (board2[yPlace - 1, xPlace - 1] == 1)
                 {
                     Console.WriteLine("HIT!");
-                    if(!IsAlive(!p1, board1, board2, height, width))
+                    if (!IsAlive(!p1, board1, board2, height, width))
                     {
                         GameOver(p1);
                     }
@@ -184,7 +190,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
                 if (board1[yPlace - 1, xPlace - 1] == 1)
                 {
                     Console.WriteLine("HIT!");
-                    if(!IsAlive(!p1, board1, board2, height, width))
+                    if (!IsAlive(!p1, board1, board2, height, width))
                     {
                         GameOver(p1);
                     }
