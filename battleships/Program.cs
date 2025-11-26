@@ -14,9 +14,9 @@ static void Start()
 
         while (!successHeight && !successWidth && !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
         {
-            Console.WriteLine("How high do you want the board to be?");
+            Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
             string boardHeightString = Console.ReadLine();
-            Console.WriteLine("How wide do you want the board to be?");
+            Console.WriteLine("How wide do you want the board to be? (messured in squares, do not type a unit!)");
             string boardWidthString = Console.ReadLine();
             Console.WriteLine("How many battleships do you want each player to have?");
             string shipsAmountString = Console.ReadLine();
@@ -25,11 +25,17 @@ static void Start()
             successWidth = int.TryParse(boardWidthString, out int boardWidth);
             successShips = int.TryParse(shipsAmountString, out int shipsAmount);
 
+            if (shipsAmount > boardHeight * boardWidth)
+            {
+                Console.WriteLine("There are more ships than squares, redo!");
+                successShips = false;
+            }
+
             if (successHeight && successWidth && successShips)
             {
                 Console.WriteLine("");
                 int[,] board1 = new int[boardHeight, boardWidth];
-                int[,] board2 = board1;
+                int[,] board2 = new int[boardHeight, boardWidth];
                 PlaceShips(true, board1, board2, boardHeight, boardWidth, shipsAmount);
             }
         }
@@ -104,11 +110,31 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
             {
                 if (p1)
                 {
-                    board1[RandomBoardSquareY(height), RandomBoardSquareX(width)] = 1;
+                    bool noOverlap = false;
+                    while (!noOverlap)
+                    {
+                        int randomCordY = RandomBoardSquareY(height);
+                        int randomCordX = RandomBoardSquareX(width);
+                        if (board1[randomCordY, randomCordX] != 1)
+                        {
+                            board1[randomCordY, randomCordX] = 1;
+                            noOverlap = true;
+                        }
+                    }
                 }
                 else
                 {
-                    board2[RandomBoardSquareY(height), RandomBoardSquareX(width)] = 1;
+                    bool noOverlap = false;
+                    while (!noOverlap)
+                    {
+                        int randomCordY = RandomBoardSquareY(height);
+                        int randomCordX = RandomBoardSquareX(width);
+                        if (board2[randomCordY, randomCordX] != 1)
+                        {
+                            board2[randomCordY, randomCordX] = 1;
+                            noOverlap = true;
+                        }
+                    }
                 }
             }
         }
@@ -155,9 +181,34 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
 
 static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
 {
-    bool successY = true;
-    bool successX = true;
-    //fixa så player 1 kör igen!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    bool successY = false;
+    bool successX = false;
+    if (p1)
+    {
+        while (successY == false && successX == false)
+        {
+            Console.Clear();
+            Console.WriteLine("Now it is player 1s turn to attack, player 2 should look away!\nWhen only player 1 is looking, type: \"p1\" and press [Enter]");
+            if (Console.ReadLine() == "p1")
+            {
+                successY = true;
+                successX = true;
+            }
+        }
+    }
+    else
+    {
+        while (successY == false && successX == false)
+        {
+            Console.Clear();
+            Console.WriteLine("Now it is player 2s turn to attack, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
+            if (Console.ReadLine() == "p2")
+            {
+                successY = true;
+                successX = true;
+            }
+        }
+    }
 
     while (successY && successX)
     {
@@ -173,7 +224,8 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
             {
                 if (board2[yPlace - 1, xPlace - 1] == 1)
                 {
-                    Console.WriteLine("HIT!");
+                    Console.WriteLine("HIT!\nPress [Enter] to procced");
+                    Console.ReadLine();
                     if (!IsAlive(!p1, board1, board2, height, width))
                     {
                         GameOver(p1);
@@ -181,7 +233,8 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
                 }
                 else
                 {
-                    Console.WriteLine("Miss");
+                    Console.WriteLine("Miss\nPress [Enter] to procced");
+                    Console.ReadLine();
                 }
                 Attack(!p1, board1, board2, height, width);
             }
@@ -189,7 +242,8 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
             {
                 if (board1[yPlace - 1, xPlace - 1] == 1)
                 {
-                    Console.WriteLine("HIT!");
+                    Console.WriteLine("HIT!\nPress [Enter] to procced");
+                    Console.ReadLine();
                     if (!IsAlive(!p1, board1, board2, height, width))
                     {
                         GameOver(p1);
@@ -197,7 +251,8 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
                 }
                 else
                 {
-                    Console.WriteLine("Miss");
+                    Console.WriteLine("Miss\nPress [Enter] to procced");
+                    Console.ReadLine();
                 }
                 Attack(!p1, board1, board2, height, width);
             }
@@ -261,4 +316,4 @@ static int RandomBoardSquareX(int max)// skapar ett slupat värde som inte är m
 }
 
 Start();
-Console.ReadLine();
+// Console.ReadLine();
