@@ -11,6 +11,8 @@ static void Start()
         bool successHeight = false;
         bool successWidth = false;
         bool successShips = false;
+        bool fastGame = false;
+        bool fastGameLoop = true;
 
         while (!successHeight && !successWidth && !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
         {
@@ -31,9 +33,28 @@ static void Start()
                 successShips = false;
             }
 
+
+            while (fastGameLoop)
+            {
+                Console.WriteLine("Do you want to have fast game enabled? [y]/[n] \n(Will make it so the players can see eachothers attacks, not where the boats are placed thoug)");
+                if (Console.ReadLine() == "y")
+                {
+                    fastGame = true;
+                    fastGameLoop = false;
+                }
+                else if (Console.ReadLine() == "n")
+                {
+                    fastGame = false;
+                    fastGameLoop = false;
+                }
+                else
+                {
+                    Console.WriteLine("You need to type \"y\" for yes or \"n\"");
+                }
+            }
+
             if (successHeight && successWidth && successShips)
             {
-                Console.WriteLine("");
                 int[,] board1 = new int[boardHeight, boardWidth];
                 int[,] board2 = new int[boardHeight, boardWidth];
                 PlaceShips(true, board1, board2, boardHeight, boardWidth, shipsAmount);
@@ -183,32 +204,32 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
 {
     bool successY = false;
     bool successX = false;
-    if (p1)
-    {
-        while (successY == false && successX == false)
-        {
-            Console.Clear();
-            Console.WriteLine("Now it is player 1s turn to attack, player 2 should look away!\nWhen only player 1 is looking, type: \"p1\" and press [Enter]");
-            if (Console.ReadLine() == "p1")
-            {
-                successY = true;
-                successX = true;
-            }
-        }
-    }
-    else
-    {
-        while (successY == false && successX == false)
-        {
-            Console.Clear();
-            Console.WriteLine("Now it is player 2s turn to attack, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
-            if (Console.ReadLine() == "p2")
-            {
-                successY = true;
-                successX = true;
-            }
-        }
-    }
+    // if (p1)
+    // {
+    //     while (successY == false && successX == false)
+    //     {
+    //         Console.Clear();
+    //         Console.WriteLine("Now it is player 1s turn to attack, player 2 should look away!\nWhen only player 1 is looking, type: \"p1\" and press [Enter]");
+    //         if (Console.ReadLine() == "p1")
+    //         {
+    //             successY = true;
+    //             successX = true;
+    //         }
+    //     }
+    // }
+    // else
+    // {
+    //     while (successY == false && successX == false)
+    //     {
+    //         Console.Clear();
+    //         Console.WriteLine("Now it is player 2s turn to attack, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
+    //         if (Console.ReadLine() == "p2")
+    //         {
+    //             successY = true;
+    //             successX = true;
+    //         }
+    //     }
+    // }
 
     while (successY && successX)
     {
@@ -220,42 +241,41 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
         successX = int.TryParse(xPlaceString, out int xPlace);
         if (successY && successX)
         {
-            if (p1)
+
+            if (board2[yPlace - 1, xPlace - 1] == 1)
             {
-                if (board2[yPlace - 1, xPlace - 1] == 1)
+                Console.WriteLine("HIT!\nPress [Enter] to procced");
+                Console.ReadLine();
+                if (!IsAlive(!p1, board1, board2, height, width))
                 {
-                    Console.WriteLine("HIT!\nPress [Enter] to procced");
-                    Console.ReadLine();
-                    if (!IsAlive(!p1, board1, board2, height, width))
-                    {
-                        GameOver(p1);
-                    }
+                    GameOver(p1);
                 }
-                else
-                {
-                    Console.WriteLine("Miss\nPress [Enter] to procced");
-                    Console.ReadLine();
-                }
-                Attack(!p1, board1, board2, height, width);
             }
             else
             {
-                if (board1[yPlace - 1, xPlace - 1] == 1)
-                {
-                    Console.WriteLine("HIT!\nPress [Enter] to procced");
-                    Console.ReadLine();
-                    if (!IsAlive(!p1, board1, board2, height, width))
-                    {
-                        GameOver(p1);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Miss\nPress [Enter] to procced");
-                    Console.ReadLine();
-                }
-                Attack(!p1, board1, board2, height, width);
+                Console.WriteLine("Miss\nPress [Enter] to procced");
+                Console.ReadLine();
             }
+            // else
+            // {
+            //     if (board1[yPlace - 1, xPlace - 1] == 1)
+            //     {
+            //         Console.WriteLine("HIT!\nPress [Enter] to procced");
+            //         Console.ReadLine();
+            //         if (!IsAlive(!p1, board1, board2, height, width))
+            //         {
+            //             GameOver(p1);
+            //         }
+            //     }
+            //     else
+            //     {
+            //         Console.WriteLine("Miss\nPress [Enter] to procced");
+            //         Console.ReadLine();
+            //     }
+            //     Attack(!p1, board1, board2, height, width);
+            // }
+
+            //Fixa så attack är i while loop för memoryleak är dålig, Printa board och gör snabbGame till standard
         }
     }
 }
