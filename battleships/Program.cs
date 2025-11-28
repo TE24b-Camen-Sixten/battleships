@@ -200,84 +200,83 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
     }
 }
 
-static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width)
+static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width, bool noSneakPeak) //attackerar
 {
-    bool successY = false;
-    bool successX = false;
-    // if (p1)
-    // {
-    //     while (successY == false && successX == false)
-    //     {
-    //         Console.Clear();
-    //         Console.WriteLine("Now it is player 1s turn to attack, player 2 should look away!\nWhen only player 1 is looking, type: \"p1\" and press [Enter]");
-    //         if (Console.ReadLine() == "p1")
-    //         {
-    //             successY = true;
-    //             successX = true;
-    //         }
-    //     }
-    // }
-    // else
-    // {
-    //     while (successY == false && successX == false)
-    //     {
-    //         Console.Clear();
-    //         Console.WriteLine("Now it is player 2s turn to attack, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
-    //         if (Console.ReadLine() == "p2")
-    //         {
-    //             successY = true;
-    //             successX = true;
-    //         }
-    //     }
-    // }
-
-    while (successY && successX)
+    if (noSneakPeak)
     {
-        Console.Write("Choose which square to attack\ny:");
-        string yPlaceString = Console.ReadLine();
-        Console.Write("x:");
-        string xPlaceString = Console.ReadLine();
-        successY = int.TryParse(yPlaceString, out int yPlace);
-        successX = int.TryParse(xPlaceString, out int xPlace);
-        if (successY && successX)
+        bool looking = true;
+        if (p1)
         {
-
-            if (board2[yPlace - 1, xPlace - 1] == 1)
+            while (looking)
             {
-                Console.WriteLine("HIT!\nPress [Enter] to procced");
-                Console.ReadLine();
-                if (!IsAlive(!p1, board1, board2, height, width))
+                Console.Clear();
+                Console.WriteLine("Now it is player 1s turn to attack, player 2 should look away!\nWhen only player 1 is looking, type: \"p1\" and press [Enter]");
+                if (Console.ReadLine() == "p1")
                 {
-                    GameOver(p1);
+                    looking = false;
                 }
             }
-            else
+        }
+        else
+        {
+            while (looking)
             {
-                Console.WriteLine("Miss\nPress [Enter] to procced");
-                Console.ReadLine();
+                Console.Clear();
+                Console.WriteLine("Now it is player 2s turn to attack, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
+                if (Console.ReadLine() == "p2")
+                {
+                    looking = false;
+                }
             }
-            // else
-            // {
-            //     if (board1[yPlace - 1, xPlace - 1] == 1)
-            //     {
-            //         Console.WriteLine("HIT!\nPress [Enter] to procced");
-            //         Console.ReadLine();
-            //         if (!IsAlive(!p1, board1, board2, height, width))
-            //         {
-            //             GameOver(p1);
-            //         }
-            //     }
-            //     else
-            //     {
-            //         Console.WriteLine("Miss\nPress [Enter] to procced");
-            //         Console.ReadLine();
-            //     }
-            //     Attack(!p1, board1, board2, height, width);
-            // }
-
-            //Fixa så attack är i while loop för memoryleak är dålig, Printa board och gör snabbGame till standard
         }
     }
+
+
+    Console.Write("Choose which square to attack\ny:");
+    string yPlaceString = Console.ReadLine();
+    Console.Write("x:");
+    string xPlaceString = Console.ReadLine();
+    bool successY = int.TryParse(yPlaceString, out int yPlace);
+    bool successX = int.TryParse(xPlaceString, out int xPlace);
+
+    if (successY && successX)
+    {
+
+        if (board2[yPlace - 1, xPlace - 1] == 1)
+        {
+            Console.WriteLine("HIT!\nPress [Enter] to procced");
+            Console.ReadLine();
+            if (!IsAlive(!p1, board1, board2, height, width))
+            {
+                GameOver(p1);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Miss\nPress [Enter] to procced");
+            Console.ReadLine();
+        }
+    }
+    else
+    {
+        if (board1[yPlace - 1, xPlace - 1] == 1)
+        {
+            Console.WriteLine("HIT!\nPress [Enter] to procced");
+            Console.ReadLine();
+            if (!IsAlive(!p1, board1, board2, height, width))
+            {
+                GameOver(p1);
+            }
+        }
+        else
+        {
+            Console.WriteLine("Miss\nPress [Enter] to procced");
+            Console.ReadLine();
+        }
+        Attack(!p1, board1, board2, height, width);
+    }
+
+    //Fixa så attack är i while loop för memoryleak är dålig, Printa board och gör snabbGame till standard
 }
 
 static void GameOver(bool winnerIsPlayer1)
