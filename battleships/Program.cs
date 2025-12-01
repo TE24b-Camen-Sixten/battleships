@@ -34,13 +34,14 @@
 
             while (secureCheckLoop)
             {
-                Console.WriteLine("Do you want the game to be extra secure, mening it will be hard for the players to se where the other attack [y]/[n]");
-                if (Console.ReadLine() == "y")
+                Console.WriteLine("Do you want the game to be extra secure, meaning it will be hard for the players to se where the other attack [y]/[n]");
+                string secureModeInput = Console.ReadLine();
+                if (secureModeInput == "y")
                 {
                     secureMode = true;
                     secureCheckLoop = false;
                 }
-                else if (Console.ReadLine() == "n")
+                else if (secureModeInput == "n")
                 {
                     secureMode = false;
                     secureCheckLoop = false;
@@ -55,6 +56,7 @@
             {
                 int[,] board1 = new int[boardHeight, boardWidth];
                 int[,] board2 = new int[boardHeight, boardWidth];
+                Console.Clear();
                 PlaceShips(true, board1, board2, boardHeight, boardWidth, shipsAmount, secureMode);
             }
         }
@@ -65,7 +67,7 @@
     }
 }
 
-static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2) //Skriver ut brädet för antingen spelare 1 eller 2 om "värdet" bakom rutan = 0 gör den vatten (~) annars om det är 1 gör den en båt (=)
+static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2) //Skriver ut brädet för antingen spelare 1 eller 2. Om "värdet" bakom rutan = 0 gör den vatten (~) annars om det är 1 gör den en båt (=)
 {
     if (useBoard1)
     {
@@ -124,8 +126,9 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
 
         if (yPlaceString == "auto")
         {
+            int a = i;
             i = shipsAmount;
-            for (int a = 0; a < shipsAmount; a++)
+            for (a = a; a < shipsAmount; a++)
             {
                 if (p1)
                 {
@@ -259,12 +262,19 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
             string xPlaceString = Console.ReadLine();
             successY = int.TryParse(yPlaceString, out yPlace);
             successX = int.TryParse(xPlaceString, out xPlace);
+            if (yPlace > height || xPlace > width || yPlace < 1 || xPlace < 1)
+            {
+                successX = false;
+                successY = false;
+                Console.WriteLine("That's not a valid square on the board, redo!\n");
+            }
         }
 
         if (p1)
         {
             if (board2[yPlace - 1, xPlace - 1] == 1)
             {
+                board2[yPlace - 1, xPlace - 1] = 0;
                 Console.WriteLine("HIT!\nPress [Enter] to procced");
                 Console.ReadLine();
             }
@@ -278,6 +288,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
         {
             if (board1[yPlace - 1, xPlace - 1] == 1)
             {
+                board1[yPlace - 1, xPlace - 1] = 0;
                 Console.WriteLine("HIT!\nPress [Enter] to procced");
                 Console.ReadLine();
             }
@@ -291,7 +302,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
 
         p1 = !p1;
     }
-    //Fixa så attack är i while loop för memoryleak är dålig, Printa board och gör snabbGame till standard
+    GameOver(p1);
 }
 
 static void GameOver(bool winnerIsPlayer1)
@@ -350,4 +361,3 @@ static int RandomBoardSquareX(int max) //Skapar ett slupat värde som inte är m
 }
 
 Start();
-// Console.ReadLine();
