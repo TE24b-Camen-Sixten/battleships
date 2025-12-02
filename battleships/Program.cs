@@ -12,7 +12,7 @@
         bool secureMode = false;
         bool secureCheckLoop = true;
 
-        while (!successHeight && !successWidth && !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
+        while (!successHeight || !successWidth || !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
         {
             Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
             string boardHeightString = Console.ReadLine();
@@ -25,6 +25,16 @@
             successWidth = int.TryParse(boardWidthString, out int boardWidth);
             successShips = int.TryParse(shipsAmountString, out int shipsAmount);
 
+            if (boardHeight > 20 || boardWidth > 20)
+            {
+                Console.WriteLine("WARNING! Your board is veary big. Are you sure you want to procced? if yes type \"yes\" else, press [Enter]");
+                if (Console.ReadLine() != "yes")
+                {
+                    successHeight = false;
+                    successWidth = false;
+                }
+            }
+
             if (shipsAmount > boardHeight * boardWidth)
             {
                 Console.WriteLine("There are more ships than squares, redo!");
@@ -34,7 +44,7 @@
 
             while (secureCheckLoop)
             {
-                Console.WriteLine("Do you want the game to be extra secure, meaning it will be hard for the players to se where the other attack [y]/[n]");
+                Console.WriteLine("Do you want the game to be extra secure, meaning it will be harder for the players to se where the other attack [y]/[n]");
                 string secureModeInput = Console.ReadLine();
                 if (secureModeInput == "y")
                 {
@@ -63,6 +73,7 @@
     }
     else
     {
+        Console.Clear();
         PlaceShips(true, new int[10, 10], new int[10, 10], 10, 10, 15, false);
     }
 }
@@ -118,17 +129,17 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
         Console.WriteLine("\nNow player 1 will place their ships, player 2 needs to look away");
     }
 
-    for (int i = 0; i < shipsAmount; i++)// Låter användaren placera ett skepp i taget på valfri ruta, om användaren skriver auto så placeras skeppen på random koordinater
+    for (int shipsLeft = 0; shipsLeft < shipsAmount; shipsLeft++)// Låter användaren placera ett skepp i taget på valfri ruta, om användaren skriver auto så placeras skeppen på random koordinater
     {
-        Console.Write($"\nWhere do you want to place your battleship nr: {i + 1}\nAfter that you have {shipsAmount - i - 1} left to place\nIf you want to do all this automaticaly just type \"auto\" as y value\ny:");
+        Console.Write($"\nWhere do you want to place your battleship nr: {shipsLeft + 1}\nAfter that you have {shipsAmount - shipsLeft - 1} left to place\nIf you want to do all this automaticaly just type \"auto\" as y value\ny:");
 
         string yPlaceString = Console.ReadLine();
 
         if (yPlaceString == "auto")
         {
-            int a = i;
-            i = shipsAmount;
-            for (a = a; a < shipsAmount; a++)
+            int shipsLeftAuto = shipsLeft;
+            shipsLeft = shipsAmount;
+            for (shipsLeftAuto = shipsLeftAuto; shipsLeftAuto < shipsAmount; shipsLeftAuto++)
             {
                 if (p1)
                 {
@@ -170,11 +181,43 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
             {
                 if (p1)
                 {
-                    board1[yPlace - 1, xPlace - 1] = 1;
+                    if(board1[yPlace - 1, xPlace - 1] != 1)
+                    {
+                        try
+                        {
+                            board1[yPlace - 1, xPlace - 1] = 1;
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            Console.WriteLine("Inavalid input, redo");
+                            shipsLeft --;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("there is already a ship on that square, redo!");
+                        shipsLeft--;
+                    }
                 }
                 else
                 {
-                    board2[yPlace - 1, xPlace - 1] = 1;
+                    if(board2[yPlace - 1, xPlace - 1] != 1)
+                    {
+                        try
+                        {
+                            board2[yPlace - 1, xPlace - 1] = 1;
+                        }
+                        catch (IndexOutOfRangeException)
+                        {
+                            Console.WriteLine("Inavalid input, redo");
+                            shipsLeft --;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("There is already a ship on that square, redo!");
+                        shipsLeft--;
+                    }
                 }
                 Console.Clear();
                 PrintBoard(p1, height, width, board1, board2);
