@@ -14,6 +14,7 @@
 
         while (!successHeight || !successWidth || !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
         {
+            Console.Clear();
             Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
             string boardHeightString = Console.ReadLine();
             Console.WriteLine("How wide do you want the board to be? (messured in squares, do not type a unit!)");
@@ -42,7 +43,7 @@
             }
 
 
-            while (secureCheckLoop)
+            while (secureCheckLoop && successShips)
             {
                 Console.WriteLine("Do you want the game to be extra secure, meaning it will be harder for the players to se where the other attack [y]/[n]");
                 string secureModeInput = Console.ReadLine();
@@ -131,6 +132,9 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
 
     for (int shipsLeft = 0; shipsLeft < shipsAmount; shipsLeft++)// Låter användaren placera ett skepp i taget på valfri ruta, om användaren skriver auto så placeras skeppen på random koordinater
     {
+        Console.Clear();
+        PrintBoard(p1, height, width, board1, board2);
+
         Console.Write($"\nWhere do you want to place your battleship nr: {shipsLeft + 1}\nAfter that you have {shipsAmount - shipsLeft - 1} left to place\nIf you want to do all this automaticaly just type \"auto\" as y value\ny:");
 
         string yPlaceString = Console.ReadLine();
@@ -173,25 +177,21 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
         }
         else
         {
+            bool successY = false;
+            bool successX = false;
+
             Console.Write("x:");
             string xPlaceString = Console.ReadLine();
-            bool successY = int.TryParse(yPlaceString, out int yPlace);
-            bool successX = int.TryParse(xPlaceString, out int xPlace);
+            successY = int.TryParse(yPlaceString, out int yPlace);
+            successX = int.TryParse(xPlaceString, out int xPlace);
             if (successY && successX)
             {
                 if (p1)
                 {
-                    if(board1[yPlace - 1, xPlace - 1] != 1)
+                    //Gör Try här
+                    if (board1[yPlace - 1, xPlace - 1] != 1)
                     {
-                        try
-                        {
-                            board1[yPlace - 1, xPlace - 1] = 1;
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            Console.WriteLine("Inavalid input, redo");
-                            shipsLeft --;
-                        }
+                        board1[yPlace - 1, xPlace - 1] = 1;
                     }
                     else
                     {
@@ -201,17 +201,10 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
                 }
                 else
                 {
-                    if(board2[yPlace - 1, xPlace - 1] != 1)
+                    //Gör Try här
+                    if (board2[yPlace - 1, xPlace - 1] != 1)
                     {
-                        try
-                        {
-                            board2[yPlace - 1, xPlace - 1] = 1;
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
-                            Console.WriteLine("Inavalid input, redo");
-                            shipsLeft --;
-                        }
+                        board2[yPlace - 1, xPlace - 1] = 1;
                     }
                     else
                     {
@@ -219,14 +212,16 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
                         shipsLeft--;
                     }
                 }
-                Console.Clear();
-                PrintBoard(p1, height, width, board1, board2);
+            }
+            else
+            {
+                shipsLeft--;
             }
         }
     }
     if (p1)
     {
-        while (true)
+        while (true) // Gör om så det inte är en true loop
         {
             Console.Clear();
             Console.WriteLine("Now it is player 2s turn to place their ships, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
@@ -246,9 +241,8 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
 
 static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width, bool secureMode) //attackerar
 {
-    while (IsAlive(true, board1, board2, height, width) && IsAlive(false, board1, board2, height, width))
+    while (IsAlive(board1, board2, height, width))
     {
-
         if (secureMode)
         {
             bool looking = true;
@@ -289,7 +283,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
                 Console.Clear();
                 Console.WriteLine("Now it is player 2s turn to attack");
             }
-                
+
         }
 
         bool successY = false;
@@ -368,25 +362,19 @@ static void GameOver(bool winnerIsPlayer1)
     }
 }
 
-static bool IsAlive(bool p1, int[,] board1, int[,] board2, int height, int width)
+static bool IsAlive(int[,] board1, int[,] board2, int height, int width)
 {
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
         {
-            if (p1)
+            if (board1[y, x] == 1)
             {
-                if (board1[y, x] == 1)
-                {
-                    return true;
-                }
+                return true;
             }
-            else
+            else if (board2[y, x] == 1)
             {
-                if (board2[y, x] == 1)
-                {
-                    return true;
-                }
+                return true;
             }
         }
     }
