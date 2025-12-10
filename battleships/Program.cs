@@ -80,7 +80,7 @@
     }
 }
 
-static void CustomStart() //WIP
+static void CustomSettings() //WIP
 {
     bool successHeight = false;
     bool successWidth = false;
@@ -88,13 +88,17 @@ static void CustomStart() //WIP
     bool secureMode = false;
     bool secureCheckLoop = true;
 
-    while (successHeight)
+    int height = 0;
+    int width = 0;
+    int shipsAmount = 0;
+
+    while (!successHeight)
     {
         Console.Clear();
         Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
 
         string boardHeightString = Console.ReadLine();
-        successHeight = int.TryParse(boardHeightString, out int height);
+        successHeight = int.TryParse(boardHeightString, out height);
         
         if (!successHeight)
         {
@@ -102,7 +106,7 @@ static void CustomStart() //WIP
         }
         else if (height > 20)
         {
-            Console.WriteLine("WARNING! Your board is veary high. Are you sure you want to procced? \nIf yes type \"yes\" else, press [Enter]");
+            Console.WriteLine("WARNING! Your board is veary high. Are you sure you want to procced? \nIf yes, type \"yes\" else, press [Enter]");
             if (Console.ReadLine() != "yes")
             {
                 successHeight = false;
@@ -110,9 +114,43 @@ static void CustomStart() //WIP
         }
     }
 
-    while (successWidth)
+    while (!successWidth)
     {
-        Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
+        Console.WriteLine("How wide do you want the board to be? (messured in squares, do not type a unit!)");
+
+        string boardWidthString = Console.ReadLine();
+        successWidth = int.TryParse(boardWidthString, out width);
+       
+        if (!successWidth)
+        {
+            Console.WriteLine("That isn't a valid width. Try again!");
+        }
+        else if (width > 20)
+        {
+            Console.WriteLine("WARNING! Your board is veary wide. Are you sure you want to procced? \nIf yes, type \"yes\" else, press [Enter]");
+            if (Console.ReadLine() != "yes")
+            {
+                successWidth = false;
+            }
+        }
+    }
+
+    while (!successShips)
+    {
+        Console.WriteLine("How many battleships do you want each player to have?");
+
+        string shipsAmountString = Console.ReadLine();
+        successShips = int.TryParse(shipsAmountString, out shipsAmount);
+
+        if (!successShips)
+        {
+            Console.WriteLine("That isn't a valid amount. Try again!");
+        }
+        else if (shipsAmount > height * width)
+        {
+            Console.WriteLine("Too many ships, there are more ships than squares. Try again!");
+            successShips = false;
+        }
     }
 }
 
@@ -387,7 +425,6 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
             }
             Attack(!p1, board1, board2, height, width, secureMode);
         }
-
         p1 = !p1;
     }
     GameOver(p1);
