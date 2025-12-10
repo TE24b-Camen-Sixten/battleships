@@ -6,6 +6,7 @@
 
     if (rules == "custom") //Kollar om användaren skriver custom, om hen gör det ger programmet användaren möjlighet att välja höjd, bredd och antal skepp att spela med
     {
+        // Allt i detta if statment ska bytas ut mot en separat och förbättrad metod
         bool successHeight = false;
         bool successWidth = false;
         bool successShips = false;
@@ -38,7 +39,7 @@
 
             if (shipsAmount > boardHeight * boardWidth)
             {
-                Console.WriteLine("There are more ships than squares, redo!");
+                Console.WriteLine("There are more ships than squares, try again!");
                 successShips = false;
             }
 
@@ -76,6 +77,42 @@
     {
         Console.Clear();
         PlaceShips(true, new int[10, 10], new int[10, 10], 10, 10, 15, false);
+    }
+}
+
+static void CustomStart() //WIP
+{
+    bool successHeight = false;
+    bool successWidth = false;
+    bool successShips = false;
+    bool secureMode = false;
+    bool secureCheckLoop = true;
+
+    while (successHeight)
+    {
+        Console.Clear();
+        Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
+
+        string boardHeightString = Console.ReadLine();
+        successHeight = int.TryParse(boardHeightString, out int height);
+        
+        if (!successHeight)
+        {
+            Console.WriteLine("That isn't a valid height. Try again!");
+        }
+        else if (height > 20)
+        {
+            Console.WriteLine("WARNING! Your board is veary high. Are you sure you want to procced? \nIf yes type \"yes\" else, press [Enter]");
+            if (Console.ReadLine() != "yes")
+            {
+                successHeight = false;
+            }
+        }
+    }
+
+    while (successWidth)
+    {
+        Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
     }
 }
 
@@ -188,27 +225,40 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
             {
                 if (p1)
                 {
-                    //Gör Try här
-                    if (board1[yPlace - 1, xPlace - 1] != 1)
+                    try
                     {
-                        board1[yPlace - 1, xPlace - 1] = 1;
+                        if (board1[yPlace - 1, xPlace - 1] != 1)
+                        {
+                            board1[yPlace - 1, xPlace - 1] = 1;
+                        }
+                        else
+                        {
+                            Console.WriteLine("there is already a ship on that square, try again!");
+                            shipsLeft--;
+                        }
                     }
-                    else
+                    catch (IndexOutOfRangeException)
                     {
-                        Console.WriteLine("there is already a ship on that square, redo!");
                         shipsLeft--;
                     }
                 }
                 else
                 {
-                    //Gör Try här
-                    if (board2[yPlace - 1, xPlace - 1] != 1)
+                    try
                     {
-                        board2[yPlace - 1, xPlace - 1] = 1;
+
+                        if (board2[yPlace - 1, xPlace - 1] != 1)
+                        {
+                            board2[yPlace - 1, xPlace - 1] = 1;
+                        }
+                        else
+                        {
+                            Console.WriteLine("There is already a ship on that square, try again!");
+                            shipsLeft--;
+                        }
                     }
-                    else
+                    catch (IndexOutOfRangeException)
                     {
-                        Console.WriteLine("There is already a ship on that square, redo!");
                         shipsLeft--;
                     }
                 }
@@ -221,7 +271,8 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
     }
     if (p1)
     {
-        while (true) // Gör om så det inte är en true loop
+        bool p2Loop = true;
+        while (p2Loop)
         {
             Console.Clear();
             Console.WriteLine("Now it is player 2s turn to place their ships, player 1 should look away!\nWhen only player 2 is looking, type: \"p2\" and press [Enter]");
@@ -229,7 +280,7 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
             {
                 Console.Clear();
                 PlaceShips(!p1, board1, board2, height, width, shipsAmount, secureMode);
-                break;
+                p2Loop = false;
             }
         }
     }
@@ -303,7 +354,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
             {
                 successX = false;
                 successY = false;
-                Console.WriteLine("That's not a valid square on the board, redo!\n");
+                Console.WriteLine("That's not a valid square on the board, try again!\n");
             }
         }
 
