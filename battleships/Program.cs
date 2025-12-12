@@ -15,7 +15,7 @@
     }
 }
 
-static void CustomSettings() //WIP
+static void CustomSettings()
 {
     bool successHeight = false;
     bool successWidth = false;
@@ -176,39 +176,15 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
 
         if (yPlaceString == "auto")
         {
-            int shipsLeftAuto = shipsLeft;
-            shipsLeft = shipsAmount;
-            for (shipsLeftAuto = shipsLeftAuto; shipsLeftAuto < shipsAmount; shipsLeftAuto++)
+            if (p1)
             {
-                if (p1)
-                {
-                    bool noOverlap = false;
-                    while (!noOverlap)
-                    {
-                        int randomCordY = RandomBoardSquareY(height);
-                        int randomCordX = RandomBoardSquareX(width);
-                        if (board1[randomCordY, randomCordX] != 1)
-                        {
-                            board1[randomCordY, randomCordX] = 1;
-                            noOverlap = true;
-                        }
-                    }
-                }
-                else
-                {
-                    bool noOverlap = false;
-                    while (!noOverlap)
-                    {
-                        int randomCordY = RandomBoardSquareY(height);
-                        int randomCordX = RandomBoardSquareX(width);
-                        if (board2[randomCordY, randomCordX] != 1)
-                        {
-                            board2[randomCordY, randomCordX] = 1;
-                            noOverlap = true;
-                        }
-                    }
-                }
+                board1 = autoPlacer(shipsLeft, board1, height, width);
             }
+            else
+            {
+                board2 = autoPlacer(shipsLeft, board2, height, width);
+            }
+            shipsLeft = shipsAmount;
         }
         else
         {
@@ -231,7 +207,8 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
                         }
                         else
                         {
-                            Console.WriteLine("there is already a ship on that square, try again!");
+                            Console.WriteLine("There is already a ship on that square, try again!");
+                            Console.ReadLine();
                             shipsLeft--;
                         }
                     }
@@ -252,6 +229,7 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
                         else
                         {
                             Console.WriteLine("There is already a ship on that square, try again!");
+                            Console.ReadLine();
                             shipsLeft--;
                         }
                     }
@@ -286,6 +264,25 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
     {
         Attack(!p1, board1, board2, height, width, secureMode);
     }
+}
+
+static int[,] autoPlacer(int shipsLeft, int[,] board, int height, int width)
+{
+    for (int i = 0; i < shipsLeft; i++)
+    {
+        bool noOverlap = false;
+        while (!noOverlap)
+        {
+            int randomCordY = RandomBoardSquareY(height);
+            int randomCordX = RandomBoardSquareX(width);
+            if (board[randomCordY, randomCordX] != 1)
+            {
+                board[randomCordY, randomCordX] = 1;
+                noOverlap = true;
+            }
+        }
+    }
+    return board;
 }
 
 static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width, bool secureMode) //attackerar
