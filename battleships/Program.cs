@@ -7,71 +7,72 @@
     if (rules == "custom") //Kollar om användaren skriver custom, om hen gör det ger programmet användaren möjlighet att välja höjd, bredd och antal skepp att spela med
     {
         // Allt i detta if statment ska bytas ut mot en separat och förbättrad metod
-        bool successHeight = false;
-        bool successWidth = false;
-        bool successShips = false;
-        bool secureMode = false;
-        bool secureCheckLoop = true;
+        // bool successHeight = false;
+        // bool successWidth = false;
+        // bool successShips = false;
+        // bool secureMode = false;
+        // bool secureCheckLoop = true;
 
-        while (!successHeight || !successWidth || !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
-        {
-            Console.Clear();
-            Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
-            string boardHeightString = Console.ReadLine();
-            Console.WriteLine("How wide do you want the board to be? (messured in squares, do not type a unit!)");
-            string boardWidthString = Console.ReadLine();
-            Console.WriteLine("How many battleships do you want each player to have?");
-            string shipsAmountString = Console.ReadLine();
+        // while (!successHeight || !successWidth || !successShips) //Ser till att användaren skriver gilltiga tal som sin höjd, bredd och antal skepp. Efter det låter den dig placera skeppen
+        // {
+        //     Console.Clear();
+        //     Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
+        //     string boardHeightString = Console.ReadLine();
+        //     Console.WriteLine("How wide do you want the board to be? (messured in squares, do not type a unit!)");
+        //     string boardWidthString = Console.ReadLine();
+        //     Console.WriteLine("How many battleships do you want each player to have?");
+        //     string shipsAmountString = Console.ReadLine();
 
-            successHeight = int.TryParse(boardHeightString, out int boardHeight);
-            successWidth = int.TryParse(boardWidthString, out int boardWidth);
-            successShips = int.TryParse(shipsAmountString, out int shipsAmount);
+        //     successHeight = int.TryParse(boardHeightString, out int boardHeight);
+        //     successWidth = int.TryParse(boardWidthString, out int boardWidth);
+        //     successShips = int.TryParse(shipsAmountString, out int shipsAmount);
 
-            if (boardHeight > 20 || boardWidth > 20)
-            {
-                Console.WriteLine("WARNING! Your board is veary big. Are you sure you want to procced? if yes type \"yes\" else, press [Enter]");
-                if (Console.ReadLine() != "yes")
-                {
-                    successHeight = false;
-                    successWidth = false;
-                }
-            }
+        //     if (boardHeight > 20 || boardWidth > 20)
+        //     {
+        //         Console.WriteLine("WARNING! Your board is veary big. Are you sure you want to procced? if yes type \"yes\" else, press [Enter]");
+        //         if (Console.ReadLine() != "yes")
+        //         {
+        //             successHeight = false;
+        //             successWidth = false;
+        //         }
+        //     }
 
-            if (shipsAmount > boardHeight * boardWidth)
-            {
-                Console.WriteLine("There are more ships than squares, try again!");
-                successShips = false;
-            }
+        //     if (shipsAmount > boardHeight * boardWidth)
+        //     {
+        //         Console.WriteLine("There are more ships than squares, try again!");
+        //         successShips = false;
+        //     }
 
 
-            while (secureCheckLoop && successShips)
-            {
-                Console.WriteLine("Do you want the game to be extra secure, meaning it will be harder for the players to se where the other attack [y]/[n]");
-                string secureModeInput = Console.ReadLine();
-                if (secureModeInput == "y")
-                {
-                    secureMode = true;
-                    secureCheckLoop = false;
-                }
-                else if (secureModeInput == "n")
-                {
-                    secureMode = false;
-                    secureCheckLoop = false;
-                }
-                else
-                {
-                    Console.WriteLine("You need to type \"y\" for yes or \"n\"");
-                }
-            }
+        //     while (secureCheckLoop && successShips)
+        //     {
+        //         Console.WriteLine("Do you want the game to be extra secure, meaning it will be harder for the players to se where the other attack [y]/[n]");
+        //         string secureModeInput = Console.ReadLine();
+        //         if (secureModeInput == "y")
+        //         {
+        //             secureMode = true;
+        //             secureCheckLoop = false;
+        //         }
+        //         else if (secureModeInput == "n")
+        //         {
+        //             secureMode = false;
+        //             secureCheckLoop = false;
+        //         }
+        //         else
+        //         {
+        //             Console.WriteLine("You need to type \"y\" for yes or \"n\"");
+        //         }
+        //     }
 
-            if (successHeight && successWidth && successShips)
-            {
-                int[,] board1 = new int[boardHeight, boardWidth];
-                int[,] board2 = new int[boardHeight, boardWidth];
-                Console.Clear();
-                PlaceShips(true, board1, board2, boardHeight, boardWidth, shipsAmount, secureMode);
-            }
-        }
+        //     if (successHeight && successWidth && successShips)
+        //     {
+        //         int[,] board1 = new int[boardHeight, boardWidth];
+        //         int[,] board2 = new int[boardHeight, boardWidth];
+        //         Console.Clear();
+        //         PlaceShips(true, board1, board2, boardHeight, boardWidth, shipsAmount, secureMode);
+        //     }
+        // }
+        CustomSettings();
     }
     else
     {
@@ -152,6 +153,31 @@ static void CustomSettings() //WIP
             successShips = false;
         }
     }
+
+    while (secureCheckLoop)
+    {
+        Console.WriteLine("Do you want the game to be extra secure, meaning it will be harder for the players to se where the other attack [y]/[n]");
+        string secureModeInput = Console.ReadLine();
+
+        if(secureModeInput == "y")
+        {
+            secureMode = true;
+            secureCheckLoop = false;
+        }
+        else if (secureModeInput == "n")
+        {
+            // secureMode = false;
+            secureCheckLoop = false;
+        }
+        else
+        {
+            Console.WriteLine("That isn't a valid input. The input needs to be either \"y\" or \"n\". Try again!");
+        }
+    }
+    int[,] board1 = new int[height, width];
+    int[,] board2 = new int[height, width];
+    Console.Clear();
+    PlaceShips(true, board1, board2, height, width, shipsAmount, secureMode);
 }
 
 static void PrintBoard(bool useBoard1, int height, int width, int[,] board1, int[,] board2) //Skriver ut brädet för antingen spelare 1 eller 2. Om "värdet" bakom rutan = 0 gör den vatten (~) annars om det är 1 gör den en båt (=)
