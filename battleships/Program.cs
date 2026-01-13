@@ -20,6 +20,8 @@ static void CustomSettings()
     bool successHeight = false;
     bool successWidth = false;
     bool successShips = false;
+    bool successAI = false;
+    bool wantAI = false;
     bool secureMode = false;
     bool secureCheckLoop = true;
 
@@ -27,9 +29,9 @@ static void CustomSettings()
     int width = 0;
     int shipsAmount = 0;
 
+    Console.Clear();
     while (!successHeight)
     {
-        Console.Clear();
         Console.WriteLine("How high do you want the board to be? (messured in squares, do not type a unit!)");
 
         string boardHeightString = Console.ReadLine();
@@ -38,6 +40,7 @@ static void CustomSettings()
         if (!successHeight)
         {
             Console.WriteLine("That isn't a valid height. Try again!");
+            Console.ReadLine();
         }
         else if (height > 20)
         {
@@ -59,6 +62,7 @@ static void CustomSettings()
         if (!successWidth)
         {
             Console.WriteLine("That isn't a valid width. Try again!");
+            Console.ReadLine();
         }
         else if (width > 20)
         {
@@ -88,6 +92,27 @@ static void CustomSettings()
         }
     }
 
+    while (!successAI)
+    {
+        Console.WriteLine("Do you want to play against an AI [y]/[n]");
+        string wantAIInput = Console.ReadLine();
+
+        if (wantAIInput == "y")
+        {
+            wantAI = true;
+            successAI = true;
+        }
+        else if(wantAIInput == "n")
+        {
+            //wantAI = false;
+            successAI = true;
+        }
+        else
+        {
+            
+        }
+    }
+
     while (secureCheckLoop)
     {
         Console.WriteLine("Do you want the game to be extra secure, meaning it will be harder for the players to se where the other attack [y]/[n]");
@@ -108,6 +133,8 @@ static void CustomSettings()
             Console.WriteLine("That isn't a valid input. The input needs to be either \"y\" or \"n\". Try again!");
         }
     }
+
+
     int[,] board1 = new int[height, width];
     int[,] board2 = new int[height, width];
     Console.Clear();
@@ -178,11 +205,11 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
         {
             if (p1)
             {
-                board1 = autoPlacer(shipsLeft, board1, height, width);
+                board1 = autoPlacer(shipsAmount - shipsLeft, board1, height, width);
             }
             else
             {
-                board2 = autoPlacer(shipsLeft, board2, height, width);
+                board2 = autoPlacer(shipsAmount - shipsLeft, board2, height, width);
             }
             shipsLeft = shipsAmount;
         }
@@ -221,7 +248,6 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
                 {
                     try
                     {
-
                         if (board2[yPlace - 1, xPlace - 1] != 1)
                         {
                             board2[yPlace - 1, xPlace - 1] = 1;
@@ -287,7 +313,7 @@ static int[,] autoPlacer(int shipsLeft, int[,] board, int height, int width)
 
 static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width, bool secureMode) //attackerar
 {
-    while (IsAlive(board1, board2, height, width))
+    while (IsAlive(p1, board1, board2, height, width))
     {
         if (secureMode)
         {
@@ -341,6 +367,11 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
         {
             Console.Write("Choose which square to attack\ny:");
             string yPlaceString = Console.ReadLine();
+            if (yPlaceString == "test")
+            {
+                PrintBoard(true, height, width, board1, board2);
+                PrintBoard(false, height, width, board1, board2);
+            }
             Console.Write("x:");
             string xPlaceString = Console.ReadLine();
             successY = int.TryParse(yPlaceString, out yPlace);
@@ -350,6 +381,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
                 successX = false;
                 successY = false;
                 Console.WriteLine("That's not a valid square on the board, try again!\n");
+                Console.ReadLine();
             }
         }
 
@@ -380,11 +412,10 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
                 Console.WriteLine("Miss\nPress [Enter] to procced");
                 Console.ReadLine();
             }
-            Attack(!p1, board1, board2, height, width, secureMode);
         }
         p1 = !p1;
     }
-    GameOver(p1);
+    GameOver(!p1);
 }
 
 static void GameOver(bool winnerIsPlayer1)
@@ -407,19 +438,25 @@ static void GameOver(bool winnerIsPlayer1)
     }
 }
 
-static bool IsAlive(int[,] board1, int[,] board2, int height, int width)
+static bool IsAlive(bool p1, int[,] board1, int[,] board2, int height, int width)
 {
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
         {
-            if (board1[y, x] == 1)
+            if (p1)
             {
-                return true;
+                if (board1[y, x] == 1)
+                {
+                    return true;
+                }   
             }
-            else if (board2[y, x] == 1)
+            else
             {
-                return true;
+                if (board2[y, x] == 1)
+                {
+                    return true;
+                }
             }
         }
     }
