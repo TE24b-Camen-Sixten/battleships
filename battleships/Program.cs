@@ -1,4 +1,6 @@
-﻿static void Start()
+﻿using System.Diagnostics;
+
+static void Start()//
 {
     Console.WriteLine("Welcome to Battleships!\n");
     Console.WriteLine("To start game press [Enter], to play with custom rules, type \"custom\" and then press [Enter]");
@@ -15,13 +17,11 @@
     }
 }
 
-static void CustomSettings()
+static void CustomSettings()//Låter spelaren välja egna regler, t.ex hur stort brädet ska vara eller hur många båtar man ska ha
 {
     bool successHeight = false;
     bool successWidth = false;
     bool successShips = false;
-    bool successAI = false;
-    bool wantAI = false;
     bool secureMode = false;
     bool secureCheckLoop = true;
 
@@ -36,7 +36,7 @@ static void CustomSettings()
 
         string boardHeightString = Console.ReadLine();
         successHeight = int.TryParse(boardHeightString, out height);
-        
+
         if (!successHeight)
         {
             Console.WriteLine("That isn't a valid height. Try again!");
@@ -58,7 +58,7 @@ static void CustomSettings()
 
         string boardWidthString = Console.ReadLine();
         successWidth = int.TryParse(boardWidthString, out width);
-       
+
         if (!successWidth)
         {
             Console.WriteLine("That isn't a valid width. Try again!");
@@ -92,33 +92,12 @@ static void CustomSettings()
         }
     }
 
-    while (!successAI)
-    {
-        Console.WriteLine("Do you want to play against an AI [y]/[n]");
-        string wantAIInput = Console.ReadLine();
-
-        if (wantAIInput == "y")
-        {
-            wantAI = true;
-            successAI = true;
-        }
-        else if(wantAIInput == "n")
-        {
-            //wantAI = false;
-            successAI = true;
-        }
-        else
-        {
-            
-        }
-    }
-
     while (secureCheckLoop)
     {
         Console.WriteLine("Do you want the game to be extra secure, meaning it will be harder for the players to se where the other attack [y]/[n]");
         string secureModeInput = Console.ReadLine();
 
-        if(secureModeInput == "y")
+        if (secureModeInput == "y")
         {
             secureMode = true;
             secureCheckLoop = false;
@@ -267,6 +246,8 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
             }
             else
             {
+                Console.WriteLine("One of the values enterd is not a valid nummber, try again!");
+                Console.ReadLine();
                 shipsLeft--;
             }
         }
@@ -292,15 +273,15 @@ static void PlaceShips(bool p1, int[,] board1, int[,] board2, int height, int wi
     }
 }
 
-static int[,] autoPlacer(int shipsLeft, int[,] board, int height, int width)
+static int[,] autoPlacer(int shipsLeft, int[,] board, int height, int width) //Placerar ut resterande skepp på random platser på brädet, ser även till att inga två skepp kan ligga på varandra
 {
     for (int i = 0; i < shipsLeft; i++)
     {
         bool noOverlap = false;
         while (!noOverlap)
         {
-            int randomCordY = RandomBoardSquareY(height);
-            int randomCordX = RandomBoardSquareX(width);
+            int randomCordY = RandomBoardSquareCoord(height);
+            int randomCordX = RandomBoardSquareCoord(width);
             if (board[randomCordY, randomCordX] != 1)
             {
                 board[randomCordY, randomCordX] = 1;
@@ -367,11 +348,12 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
         {
             Console.Write("Choose which square to attack\ny:");
             string yPlaceString = Console.ReadLine();
-            if (yPlaceString == "test")
-            {
-                PrintBoard(true, height, width, board1, board2);
-                PrintBoard(false, height, width, board1, board2);
-            }
+            // TEST GREJER, TA BORT INNAN INLÄMNING!!!
+            // if (yPlaceString == "test")
+            // {
+            //     PrintBoard(true, height, width, board1, board2);
+            //     PrintBoard(false, height, width, board1, board2);
+            // }
             Console.Write("x:");
             string xPlaceString = Console.ReadLine();
             successY = int.TryParse(yPlaceString, out yPlace);
@@ -418,7 +400,7 @@ static void Attack(bool p1, int[,] board1, int[,] board2, int height, int width,
     GameOver(!p1);
 }
 
-static void GameOver(bool winnerIsPlayer1)
+static void GameOver(bool winnerIsPlayer1)//skriver ut vem som vann
 {
     if (winnerIsPlayer1)
     {
@@ -438,7 +420,7 @@ static void GameOver(bool winnerIsPlayer1)
     }
 }
 
-static bool IsAlive(bool p1, int[,] board1, int[,] board2, int height, int width)
+static bool IsAlive(bool p1, int[,] board1, int[,] board2, int height, int width)//Kollar om antingen spelare 1 eller 2 lever
 {
     for (int y = 0; y < height; y++)
     {
@@ -449,7 +431,7 @@ static bool IsAlive(bool p1, int[,] board1, int[,] board2, int height, int width
                 if (board1[y, x] == 1)
                 {
                     return true;
-                }   
+                }
             }
             else
             {
@@ -463,14 +445,8 @@ static bool IsAlive(bool p1, int[,] board1, int[,] board2, int height, int width
     return false;
 }
 
-static int RandomBoardSquareY(int max) //Skapar ett slumpat värde som inte är mer än höjden på brädet
+static int RandomBoardSquareCoord(int max) //Skapar ett slumpat värde som inte är mer än höjden på brädet
 {
     return Random.Shared.Next(max);
 }
-
-static int RandomBoardSquareX(int max) //Skapar ett slupat värde som inte är mer än bredden på brädet
-{
-    return Random.Shared.Next(max);
-}
-
 Start();
